@@ -2,10 +2,13 @@ package telegram
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	tgbot "github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
+
+	"jadwal_sholat/internal/service"
 )
 
 func (b *Bot) registerHandlers() {
@@ -31,28 +34,23 @@ func (b *Bot) handleStart(
 ) {
 	chatID := update.Message.Chat.ID
 
-	msg := `
-Assalamu'alaikum 👋
+	msg := `Assalamu'alaikum 👋
 
 Selamat datang di Prayer Bot.
 
-Untuk mulai menerima notifikasi jadwal sholat, silakan bagikan lokasi Anda menggunakan tombol di bawah.
-`
+Silakan bagikan lokasi Anda untuk menerima notifikasi jadwal sholat.`
 
 	_, err := bot.SendMessage(
 		ctx,
 		&tgbot.SendMessageParams{
-			ChatID: chatID,
-			Text:   msg,
+			ChatID:     chatID,
+			Text:       msg,
 			ReplyMarkup: MainKeyboard(),
 		},
 	)
 
 	if err != nil {
-		log.Printf(
-			"failed send start message: %v",
-			err,
-		)
+		log.Printf("failed send start message: %v", err)
 	}
 }
 
@@ -61,7 +59,9 @@ func (b *Bot) handleLocation(
 	bot *tgbot.Bot,
 	update *models.Update,
 ) {
+
 	location := update.Message.Location
+	chatID := update.Message.Chat.ID
 
 	log.Printf(
 		"location received: lat=%f lon=%f",
@@ -69,18 +69,93 @@ func (b *Bot) handleLocation(
 		location.Longitude,
 	)
 
-	_, err := bot.SendMessage(
+	// Save user
+	userService := service.NewUserService(
+		b.db,
+	)
+
+	err := userService.SaveLocation(
+		ctx,
+		chatID,
+		location.Latitude,
+		location.Longitude,
+	)
+
+	if err != nil {
+
+		log.Printf(
+			"failed save user location: %v",
+			err,
+		)
+
+		_, _ = bot.SendMessage(
+			ctx,
+			&tgbot.SendMessageParams{
+				ChatID: chatID,
+				Text:   "❌ Gagal menyimpan lokasi.",
+			},
+		)
+
+		return
+	}
+
+	// Calculate prayer schedule
+	prayerService := service.NewPrayerService()
+
+	schedule, err := prayerService.GetTodaySchedule(
+		location.Latitude,
+		location.Longitude,
+	)
+
+	if err != nil {
+
+		log.Printf(
+			"failed calculate prayer schedule: %v",
+			err,
+		)
+
+		_, _ = bot.SendMessage(
+			ctx,
+			&tgbot.SendMessageParams{
+				ChatID: chatID,
+				Text:   "❌ Gagal menghitung jadwal sholat.",
+			},
+		)
+
+		return
+	}
+
+	message := fmt.Sprintf(
+		`✅ Lokasi berhasil disimpan
+
+Jadwal Sholat Hari Ini
+
+🌅 Subuh   : %s
+☀️ Dzuhur  : %s
+🌤 Ashar   : %s
+🌇 Maghrib : %s
+🌙 Isya    : %s
+
+🔔 Notifikasi telah diaktifkan.`,
+		schedule.Fajr.Format("15:04"),
+		schedule.Dhuhr.Format("15:04"),
+		schedule.Asr.Format("15:04"),
+		schedule.Maghrib.Format("15:04"),
+		schedule.Isha.Format("15:04"),
+	)
+
+	_, err = bot.SendMessage(
 		ctx,
 		&tgbot.SendMessageParams{
-			ChatID: update.Message.Chat.ID,
-			Text: "📍 Lokasi berhasil diterima.\n\n" +
-				"Notifikasi jadwal sholat akan segera diaktifkan.",
+			ChatID:     chatID,
+			Text:       message,
+			ReplyMarkup: MainKeyboard(),
 		},
 	)
 
 	if err != nil {
 		log.Printf(
-			"failed send location confirmation: %v",
+			"failed send prayer schedule: %v",
 			err,
 		)
 	}
