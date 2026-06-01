@@ -44,17 +44,7 @@ Untuk mulai menerima notifikasi jadwal sholat, silakan bagikan lokasi Anda mengg
 		&tgbot.SendMessageParams{
 			ChatID: chatID,
 			Text:   msg,
-			ReplyMarkup: &models.ReplyKeyboardMarkup{
-				ResizeKeyboard: true,
-				Keyboard: [][]models.KeyboardButton{
-					{
-						{
-							Text:            "📍 Bagikan Lokasi",
-							RequestLocation: true,
-						},
-					},
-				},
-			},
+			ReplyMarkup: MainKeyboard(),
 		},
 	)
 
