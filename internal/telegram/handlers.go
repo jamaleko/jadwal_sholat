@@ -12,6 +12,7 @@ import (
 )
 
 func (b *Bot) registerHandlers() {
+
 	b.client.RegisterHandler(
 		tgbot.HandlerTypeMessageText,
 		"/start",
@@ -19,12 +20,17 @@ func (b *Bot) registerHandlers() {
 		b.handleStart,
 	)
 
-	/*b.client.RegisterHandler(
-		tgbot.HandlerTypeMessageLocation,
-		"",
-		tgbot.MatchTypeExact,
+	b.client.RegisterHandlerMatchFunc(
+		func(update *models.Update) bool {
+
+			if update.Message == nil {
+				return false
+			}
+
+			return update.Message.Location != nil
+		},
 		b.handleLocation,
-	)*/
+	)
 }
 
 func (b *Bot) handleStart(
