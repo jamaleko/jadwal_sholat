@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/jackc/pgx/v5"
 )
 
 func Connect(databaseURL string) (*pgxpool.Pool, error) {
@@ -22,7 +23,7 @@ func Connect(databaseURL string) (*pgxpool.Pool, error) {
 			err,
 		)
 	}
-
+	config.ConnConfig.DefaultQueryExecMode = pgx.QueryExecModeSimpleProtocol
 	// Connection pool settings
 	config.MaxConns = 10
 	config.MinConns = 1
