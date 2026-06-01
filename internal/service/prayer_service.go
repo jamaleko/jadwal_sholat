@@ -18,7 +18,9 @@ func (s *PrayerService) GetTodaySchedule(
 	longitude float64,
 ) (*models.PrayerSchedule, error) {
 
-	now := time.Now()
+	wib, _ := time.LoadLocation("Asia/Jakarta")
+
+	now := time.Now().In(wib)
 
 	schedule, err := prayer.CalculatePrayerTimes(
 		latitude,
