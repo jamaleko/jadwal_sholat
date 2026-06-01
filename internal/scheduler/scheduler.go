@@ -86,7 +86,7 @@ func checkAndSend(
 
 	// hanya cek menit, biar aman jika delay
 	
-	prayerTime = time.Now().Add(1 * time.Minute)
+	prayerTime = time.Now()
 	if now := time.Now(); now.Hour() != prayerTime.Hour() || now.Minute() != prayerTime.Minute() {
 		return
 	}
