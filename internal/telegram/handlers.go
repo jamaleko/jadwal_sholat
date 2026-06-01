@@ -20,6 +20,27 @@ func (b *Bot) registerHandlers() {
 		b.handleStart,
 	)
 
+	b.client.RegisterHandler(
+		tgbot.HandlerTypeMessageText,
+		"📖 Jadwal Hari Ini",
+		tgbot.MatchTypeExact,
+		b.handleTodaySchedule,
+	)
+	
+	b.client.RegisterHandler(
+		tgbot.HandlerTypeMessageText,
+		"🔕 Stop Notifikasi",
+		tgbot.MatchTypeExact,
+		b.handleDisableNotification,
+	)
+	
+	b.client.RegisterHandler(
+		tgbot.HandlerTypeMessageText,
+		"🔔 Aktifkan Notifikasi",
+		tgbot.MatchTypeExact,
+		b.handleEnableNotification,
+	)
+
 	b.client.RegisterHandlerMatchFunc(
 		func(update *models.Update) bool {
 
@@ -32,7 +53,151 @@ func (b *Bot) registerHandlers() {
 		b.handleLocation,
 	)
 }
+func (b *Bot) handleTodaySchedule(
+	ctx context.Context,
+	bot *tgbot.Bot,
+	update *models.Update,
+) {
 
+	chatID := update.Message.Chat.ID
+
+	userService := service.NewUserService(b.db)
+
+	user, err := userService.GetByChatID(
+		ctx,
+		chatID,
+	)
+
+	if err != nil {
+
+		_, _ = bot.SendMessage(
+			ctx,
+			&tgbot.SendMessageParams{
+				ChatID: chatID,
+				Text:   "❌ Silakan bagikan lokasi terlebih dahulu.",
+			},
+		)
+
+		return
+	}
+
+	prayerService := service.NewPrayerService()
+
+	schedule, err := prayerService.GetTodaySchedule(
+		user.Latitude,
+		user.Longitude,
+	)
+
+	if err != nil {
+
+		_, _ = bot.SendMessage(
+			ctx,
+			&tgbot.SendMessageParams{
+				ChatID: chatID,
+				Text:   "❌ Gagal mengambil jadwal sholat.",
+			},
+		)
+
+		return
+	}
+
+	message := fmt.Sprintf(
+		`📖 Jadwal Sholat Hari Ini
+
+🌅 Subuh   : %s
+☀️ Dzuhur  : %s
+🌤 Ashar   : %s
+🌇 Maghrib : %s
+🌙 Isya    : %s`,
+		schedule.Fajr.Format("15:04"),
+		schedule.Dhuhr.Format("15:04"),
+		schedule.Asr.Format("15:04"),
+		schedule.Maghrib.Format("15:04"),
+		schedule.Isha.Format("15:04"),
+	)
+
+	_, _ = bot.SendMessage(
+		ctx,
+		&tgbot.SendMessageParams{
+			ChatID: chatID,
+			Text:   message,
+		},
+	)
+}
+func (b *Bot) handleDisableNotification(
+	ctx context.Context,
+	bot *tgbot.Bot,
+	update *models.Update,
+) {
+
+	chatID := update.Message.Chat.ID
+
+	userService := service.NewUserService(b.db)
+
+	err := userService.GetActiveUsers(
+		ctx,
+		chatID,
+		false,
+	)
+
+	if err != nil {
+
+		_, _ = bot.SendMessage(
+			ctx,
+			&tgbot.SendMessageParams{
+				ChatID: chatID,
+				Text:   "❌ Gagal menonaktifkan notifikasi.",
+			},
+		)
+
+		return
+	}
+
+	_, _ = bot.SendMessage(
+		ctx,
+		&tgbot.SendMessageParams{
+			ChatID: chatID,
+			Text:   "🔕 Notifikasi berhasil dinonaktifkan.",
+		},
+	)
+}
+func (b *Bot) handleEnableNotification(
+	ctx context.Context,
+	bot *tgbot.Bot,
+	update *models.Update,
+) {
+
+	chatID := update.Message.Chat.ID
+
+	userService := service.NewUserService(b.db)
+
+	err := userService.GetActiveUsers(
+		ctx,
+		chatID,
+		true,
+	)
+
+	if err != nil {
+
+		_, _ = bot.SendMessage(
+			ctx,
+			&tgbot.SendMessageParams{
+				ChatID: chatID,
+				Text:   "❌ Gagal mengaktifkan notifikasi.",
+			},
+		)
+
+		return
+	}
+
+	_, _ = bot.SendMessage(
+		ctx,
+		&tgbot.SendMessageParams{
+			ChatID: chatID,
+			Text:   "🔔 Notifikasi berhasil diaktifkan.",
+		},
+	)
+}
 func (b *Bot) handleStart(
 	ctx context.Context,
 	bot *tgbot.Bot,
