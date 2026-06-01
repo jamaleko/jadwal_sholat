@@ -8,7 +8,7 @@ import (
 	tgbot "github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
 
-	"jadwal_sholat/internal/service"
+	"prayer-bot/internal/service"
 )
 
 func (b *Bot) registerHandlers() {
