@@ -3,50 +3,46 @@ package prayer
 import (
 	"time"
 
-	adhan "github.com/hablullah/go-prayer"
-)
+	goprayer "github.com/hablullah/go-prayer"
 
-type PrayerSchedule struct {
-	Fajr    time.Time
-	Dhuhr   time.Time
-	Asr     time.Time
-	Maghrib time.Time
-	Isha    time.Time
-}
+	"prayer-bot/internal/models"
+)
 
 func CalculatePrayerTimes(
 	latitude float64,
 	longitude float64,
 	date time.Time,
-) (*PrayerSchedule, error) {
+) (*models.PrayerSchedule, error) {
 
-	coordinates := adhan.Coordinates{
-		Latitude:  latitude,
-		Longitude: longitude,
-	}
+	location := date.Location()
 
-	params := adhan.GetMuslimWorldLeagueConfiguration()
-
-	// Indonesia mayoritas Syafi'i
-	params.Madhab = adhan.Shafi
-
-	// MABIMS/Kemenag approximation
-	params.FajrAngle = 20.0
-	params.IshaAngle = 18.0
-
-	prayerTimes := adhan.NewPrayerTimes(
-		coordinates,
-		date,
-		params,
+	schedules, err := goprayer.Calculate(
+		goprayer.Config{
+			Latitude:           latitude,
+			Longitude:          longitude,
+			Timezone:           location,
+			TwilightConvention: goprayer.Kemenag(),
+			AsrConvention:      goprayer.Shafii,
+			PreciseToSeconds:   false,
+		},
+		date.Year(),
 	)
 
-	schedule := &PrayerSchedule{
-		Fajr:    prayerTimes.Fajr,
-		Dhuhr:   prayerTimes.Dhuhr,
-		Asr:     prayerTimes.Asr,
-		Maghrib: prayerTimes.Maghrib,
-		Isha:    prayerTimes.Isha,
+	if err != nil {
+		return nil, err
 	}
 
-	return schedule, nil
+	day := date.YearDay()
+
+	schedule := schedules[day-1]
+
+	result := &models.PrayerSchedule{
+		Fajr:    schedule.Fajr,
+		Dhuhr:   schedule.Zuhr,
+		Asr:     schedule.Asr,
+		Maghrib: schedule.Maghrib,
+		Isha:    schedule.Isha,
+	}
+
+	return result, nil
 }
