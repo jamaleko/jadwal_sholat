@@ -75,7 +75,7 @@ func checkAndSend(
 	chatID int64,
 	prayerName string,
 	//prayerTime time.Time,
-	prayerTime = time.Now().Add(1 * time.Minute),
+	prayerTime = time.Now().Add(1 * time.Minute)
 	today time.Time,
 ) {
 	ctx := context.Background()
