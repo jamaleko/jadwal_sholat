@@ -10,6 +10,7 @@ import (
 
 	"prayer-bot/internal/service"
 	"prayer-bot/internal/telegram"
+	tgbot "github.com/go-telegram/bot"
 )
 
 func Start(
@@ -94,7 +95,7 @@ func checkAndSend(
 
 	msg := fmt.Sprintf("🔔 Waktu %s telah tiba! ⏰", prayerName)
 
-	_, err = bot.Client().SendMessage(ctx, &bot.Client().SendMessageParams{
+	_, err = bot.Client().SendMessage(ctx, &tgbot.SendMessageParams{
 		ChatID: chatID,
 		Text:   msg,
 	})
