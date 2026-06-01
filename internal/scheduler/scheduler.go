@@ -80,8 +80,8 @@ func checkAndSend(
 	/*log.Printf(
 	"CHECK: %s user=%d",
 	prayerName,
-	chatID,*/
-)
+	chatID,
+)*/
 	ctx := context.Background()
 
 	// hanya cek menit, biar aman jika delay
