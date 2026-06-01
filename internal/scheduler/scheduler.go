@@ -60,7 +60,7 @@ func checkNotifications(
 			log.Printf("failed get prayer schedule for chatID=%d: %v", user.ChatID, err)
 			continue
 		}
-		schedule.Fajr = time.Now().Add(2 * time.Minute)
+		schedule.Fajr = time.Now()
 		checkAndSend(bot, notifService, user.ChatID, "Subuh", schedule.Fajr, today)
 		checkAndSend(bot, notifService, user.ChatID, "Dzuhur", schedule.Dhuhr, today)
 		checkAndSend(bot, notifService, user.ChatID, "Ashar", schedule.Asr, today)
