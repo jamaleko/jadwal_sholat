@@ -70,11 +70,6 @@ func checkNotifications(
 }
 
 func checkAndSend(
-	log.Printf(
-	"CHECK: %s user=%d",
-	prayerName,
-	chatID,
-)
 	bot *telegram.Bot,
 	notifService *service.NotificationService,
 	chatID int64,
@@ -82,6 +77,11 @@ func checkAndSend(
 	prayerTime time.Time,
 	today time.Time,
 ) {
+	log.Printf(
+	"CHECK: %s user=%d",
+	prayerName,
+	chatID,
+)
 	ctx := context.Background()
 
 	// hanya cek menit, biar aman jika delay
