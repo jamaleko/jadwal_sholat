@@ -102,7 +102,32 @@ func (s *UserService) GetByChatID(
 
 	return &user, nil
 }
+func (s *UserService) Enable(
+	ctx context.Context,
+	chatID int64,
+) error {
 
+	query := `
+		UPDATE users
+		SET active = true
+		WHERE chat_id = $1
+	`
+
+	_, err := s.db.Exec(
+		ctx,
+		query,
+		chatID,
+	)
+
+	if err != nil {
+		return fmt.Errorf(
+			"enable user: %w",
+			err,
+		)
+	}
+
+	return nil
+}
 func (s *UserService) GetActiveUsers(
 	ctx context.Context,
 ) ([]models.User, error) {
