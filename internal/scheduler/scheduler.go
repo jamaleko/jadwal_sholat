@@ -70,6 +70,11 @@ func checkNotifications(
 }
 
 func checkAndSend(
+	log.Printf(
+	"CHECK: %s user=%d",
+	prayerName,
+	chatID,
+)
 	bot *telegram.Bot,
 	notifService *service.NotificationService,
 	chatID int64,
