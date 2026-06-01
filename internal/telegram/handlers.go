@@ -19,12 +19,12 @@ func (b *Bot) registerHandlers() {
 		b.handleStart,
 	)
 
-	b.client.RegisterHandler(
+	/*b.client.RegisterHandler(
 		tgbot.HandlerTypeMessageLocation,
 		"",
 		tgbot.MatchTypeExact,
 		b.handleLocation,
-	)
+	)*/
 }
 
 func (b *Bot) handleStart(
