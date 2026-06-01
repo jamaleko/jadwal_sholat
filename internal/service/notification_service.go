@@ -2,9 +2,11 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -39,11 +41,16 @@ func (s *NotificationService) AlreadySent(
 	err := s.db.QueryRow(ctx, query, chatID, prayerName, date.Format("2006-01-02")).Scan(&exists)
 
 	if err != nil {
-		if err.Error() == "no rows in result set" {
-			return false, nil
-		}
-		return false, fmt.Errorf("check already sent: %w", err)
+
+	if errors.Is(err, pgx.ErrNoRows) {
+		return false, nil
 	}
+
+	return false, fmt.Errorf(
+		"check already sent: %w",
+		err,
+	)
+}
 
 	return true, nil
 }
