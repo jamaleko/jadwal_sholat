@@ -74,13 +74,14 @@ func checkAndSend(
 	notifService *service.NotificationService,
 	chatID int64,
 	prayerName string,
-	//prayerTime time.Time,
-	prayerTime = time.Now().Add(1 * time.Minute)
+	prayerTime time.Time,
 	today time.Time,
 ) {
 	ctx := context.Background()
 
 	// hanya cek menit, biar aman jika delay
+	
+	prayerTime = time.Now().Add(1 * time.Minute)
 	if now := time.Now(); now.Hour() != prayerTime.Hour() || now.Minute() != prayerTime.Minute() {
 		return
 	}
