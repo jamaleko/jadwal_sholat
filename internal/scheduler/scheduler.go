@@ -74,7 +74,8 @@ func checkAndSend(
 	notifService *service.NotificationService,
 	chatID int64,
 	prayerName string,
-	prayerTime time.Time,
+	//prayerTime time.Time,
+	prayerTime = time.Now().Add(1 * time.Minute),
 	today time.Time,
 ) {
 	ctx := context.Background()
