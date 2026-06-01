@@ -3,7 +3,7 @@ package prayer
 import (
 	"time"
 
-	adhan "github.com/batoulapps/adhan-go"
+	adhan "github.com/hablullah/go-prayer"
 )
 
 type PrayerSchedule struct {
