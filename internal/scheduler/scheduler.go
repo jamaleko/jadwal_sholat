@@ -77,16 +77,16 @@ func checkAndSend(
 	prayerTime time.Time,
 	today time.Time,
 ) {
-	log.Printf(
+	/*log.Printf(
 	"CHECK: %s user=%d",
 	prayerName,
-	chatID,
+	chatID,*/
 )
 	ctx := context.Background()
 
 	// hanya cek menit, biar aman jika delay
 	
-	prayerTime = time.Now()
+	//prayerTime = time.Now()
 	if now := time.Now(); now.Hour() != prayerTime.Hour() || now.Minute() != prayerTime.Minute() {
 		return
 	}
