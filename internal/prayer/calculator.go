@@ -35,7 +35,7 @@ func CalculatePrayerTimes(
 	day := date.YearDay()
 
 	schedule := schedules[day-1]
-	loc := date.Location()
+	location := date.Location()
 	result := &models.PrayerSchedule{
 		Fajr:    schedule.Fajr,
 		Dhuhr:   schedule.Zuhr,
