@@ -23,10 +23,14 @@ func NewBot(
 		return nil, err
 	}
 
-	return &Bot{
+	telegramBot := &Bot{
 		client: client,
 		db:     db,
-	}, nil
+	}
+	
+	telegramBot.registerHandlers()
+	
+	return telegramBot, nil
 }
 
 func (b *Bot) Start() {
