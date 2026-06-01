@@ -134,10 +134,9 @@ func (b *Bot) handleDisableNotification(
 
 	userService := service.NewUserService(b.db)
 
-	err := userService.GetActiveUsers(
+	err := userService.Disable(
 		ctx,
 		chatID,
-		false,
 	)
 
 	if err != nil {
@@ -171,10 +170,9 @@ func (b *Bot) handleEnableNotification(
 
 	userService := service.NewUserService(b.db)
 
-	err := userService.GetActiveUsers(
+	err := userService.Enable(
 		ctx,
 		chatID,
-		true,
 	)
 
 	if err != nil {
