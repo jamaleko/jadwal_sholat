@@ -51,12 +51,7 @@ func checkNotifications(
 	now := time.Now()
 	today := now
 	testSchedule := true
-	log.Printf(
-    "NOW=%s (%s) TARGET=%s (%s)",
-    time.Now().Format("2006-01-02 15:04:05"),
-    time.Now().Location(),
-    prayerTime.Format("2006-01-02 15:04:05"),
-    prayerTime.Location(),
+	
 )
 	for _, user := range users {
 		schedule, err := prayerService.GetTodaySchedule(
@@ -99,7 +94,12 @@ func checkAndSend(
 	ctx := context.Background()
 
 	// hanya cek menit, biar aman jika delay
-	
+	log.Printf(
+    "NOW=%s (%s) TARGET=%s (%s)",
+    time.Now().Format("2006-01-02 15:04:05"),
+    time.Now().Location(),
+    prayerTime.Format("2006-01-02 15:04:05"),
+    prayerTime.Location(),
 	//prayerTime = time.Now()
 	if now := time.Now(); now.Hour() != prayerTime.Hour() || now.Minute() != prayerTime.Minute() {
 		return
