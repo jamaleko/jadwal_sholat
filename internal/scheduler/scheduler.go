@@ -92,7 +92,9 @@ func checkAndSend(
 	chatID,
 )*/
 	ctx := context.Background()
-
+	now := time.Now()
+	loc, _ := time.LoadLocation("Asia/Jakarta")
+	now := time.Now().In(loc)
 	// hanya cek menit, biar aman jika delay
 	log.Printf(
 	    "NOW=%s (%s) TARGET=%s (%s)",
@@ -102,8 +104,7 @@ func checkAndSend(
 	    prayerTime.Location(),
 		//prayerTime = time.Now()
 	)
-	loc, _ := time.LoadLocation("Asia/Jakarta")
-	now := time.Now().In(loc)
+	
 	if now := time.Now(); now.Hour() != prayerTime.Hour() || now.Minute() != prayerTime.Minute() {
 		return
 	}
