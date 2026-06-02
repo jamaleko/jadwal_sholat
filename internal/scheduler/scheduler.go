@@ -64,11 +64,7 @@ func checkNotifications(
 		}
 		if testSchedule {
         // override semua jadwal menjadi 1 menit dari sekarang
-        schedule.Fajr = now.Add(1 * time.Minute)
-        schedule.Dhuhr = now.Add(2 * time.Minute)
-        schedule.Asr = now.Add(3 * time.Minute)
-        schedule.Maghrib = now.Add(4 * time.Minute)
-        schedule.Isha = now.Add(5 * time.Minute)
+        schedule.Dhuhr = now
     }
 		checkAndSend(bot, notifService, user.ChatID, "Subuh", schedule.Fajr, today)
 		checkAndSend(bot, notifService, user.ChatID, "Dzuhur", schedule.Dhuhr, today)
