@@ -50,7 +50,7 @@ func checkNotifications(
 
 	now := time.Now()
 	today := now
-	testSchedule := true
+	//testSchedule := true
 	
 
 	for _, user := range users {
@@ -62,10 +62,10 @@ func checkNotifications(
 			log.Printf("failed get prayer schedule for chatID=%d: %v", user.ChatID, err)
 			continue
 		}
-		if testSchedule {
+		/*if testSchedule {
         // override semua jadwal menjadi 1 menit dari sekarang
         schedule.Dhuhr = now
-    }
+    }*/
 		checkAndSend(bot, notifService, user.ChatID, "Subuh", schedule.Fajr, today)
 		checkAndSend(bot, notifService, user.ChatID, "Dzuhur", schedule.Dhuhr, today)
 		checkAndSend(bot, notifService, user.ChatID, "Ashar", schedule.Asr, today)
