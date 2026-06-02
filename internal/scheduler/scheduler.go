@@ -79,56 +79,89 @@ func checkNotifications(
 }
 
 func checkAndSend(
-	bot *telegram.Bot,
-	notifService *service.NotificationService,
-	chatID int64,
-	prayerName string,
-	prayerTime time.Time,
-	today time.Time,
+ bot *telegram.Bot,
+ notifService *service.NotificationService,
+ chatID int64,
+ prayerName string,
+ prayerTime time.Time,
+ today time.Time,
 ) {
-	/*log.Printf(
-	"CHECK: %s user=%d",
-	prayerName,
-	chatID,
-)*/
-	ctx := context.Background()
-	
-	// hanya cek menit, biar aman jika delay
-	log.Printf(
-	    "NOW=%s (%s) TARGET=%s (%s)",
-	    time.Now().Format("2006-01-02 15:04:05"),
-	    time.Now().Location(),
-	    prayerTime.Format("2006-01-02 15:04:05"),
-	    prayerTime.Location(),
-		//prayerTime = time.Now()
-	)
-	
-	if now := time.Now(); now.Hour() != prayerTime.Hour() || now.Minute() != prayerTime.Minute() {
-		return
-	}
+ ctx := context.Background()
 
-	sent, err := notifService.AlreadySent(ctx, chatID, prayerName, today)
-	if err != nil {
-		log.Printf("failed check already sent: %v", err)
-		return
-	}
-	if sent {
-		return
-	}
+ loc, err := time.LoadLocation("Asia/Jakarta")
+ if err != nil {
+  log.Printf("failed load timezone: %v", err)
+  return
+ }
 
-	msg := fmt.Sprintf("🔔 Waktu %s telah tiba! ⏰", prayerName)
+ now := time.Now().In(loc)
+ prayerTime = prayerTime.In(loc)
 
-	_, err = bot.Client().SendMessage(ctx, &tgbot.SendMessageParams{
-		ChatID: chatID,
-		Text:   msg,
-	})
-	if err != nil {
-		log.Printf("failed send notification to chatID=%d: %v", chatID, err)
-		return
-	}
+ log.Printf(
+  "NOW=%s TARGET=%s PRAYER=%s",
+  now.Format("2006-01-02 15:04:05"),
+  prayerTime.Format("2006-01-02 15:04:05"),
+  prayerName,
+ )
 
-	err = notifService.MarkAsSent(ctx, chatID, prayerName, today)
-	if err != nil {
-		log.Printf("failed mark notification sent: %v", err)
-	}
+ // cek jam dan menit saja
+ if now.Hour() != prayerTime.Hour() ||
+  now.Minute() != prayerTime.Minute() {
+  return
+ }
+
+ sent, err := notifService.AlreadySent(
+  ctx,
+  chatID,
+  prayerName,
+  now,
+ )
+
+ if err != nil {
+  log.Printf(
+   "failed check already sent: %v",
+   err,
+  )
+  return
+ }
+
+ if sent {
+  return
+ }
+
+ msg := fmt.Sprintf(
+  "🔔 Waktu %s telah tiba! ⏰",
+  prayerName,
+ )
+
+ _, err = bot.Client().SendMessage(
+  ctx,
+  &tgbot.SendMessageParams{
+   ChatID: chatID,
+   Text:   msg,
+  },
+ )
+
+ if err != nil {
+  log.Printf(
+   "failed send notification to chatID=%d: %v",
+   chatID,
+   err,
+  )
+  return
+ }
+
+ err = notifService.MarkAsSent(
+  ctx,
+  chatID,
+  prayerName,
+  now,
+ )
+
+ if err != nil {
+  log.Printf(
+   "failed mark notification sent: %v",
+   err,
+  )
+ }
 }
