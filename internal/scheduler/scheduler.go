@@ -93,12 +93,12 @@ func checkAndSend(
  now := time.Now().In(loc)
  prayerTime = prayerTime.In(loc)
 
- log.Printf(
+ /*log.Printf(
   "NOW=%s TARGET=%s PRAYER=%s",
   now.Format("2006-01-02 15:04:05"),
   prayerTime.Format("2006-01-02 15:04:05"),
   prayerName,
- )
+ )*/
 
  // cek jam dan menit saja
  if now.Hour() != prayerTime.Hour() ||
