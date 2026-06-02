@@ -95,12 +95,13 @@ func checkAndSend(
 
 	// hanya cek menit, biar aman jika delay
 	log.Printf(
-    "NOW=%s (%s) TARGET=%s (%s)",
-    time.Now().Format("2006-01-02 15:04:05"),
-    time.Now().Location(),
-    prayerTime.Format("2006-01-02 15:04:05"),
-    prayerTime.Location(),
-	//prayerTime = time.Now()
+	    "NOW=%s (%s) TARGET=%s (%s)",
+	    time.Now().Format("2006-01-02 15:04:05"),
+	    time.Now().Location(),
+	    prayerTime.Format("2006-01-02 15:04:05"),
+	    prayerTime.Location(),
+		//prayerTime = time.Now()
+	)
 	if now := time.Now(); now.Hour() != prayerTime.Hour() || now.Minute() != prayerTime.Minute() {
 		return
 	}
