@@ -12,10 +12,26 @@ import (
 	"prayer-bot/internal/scheduler"
 	"prayer-bot/internal/telegram"
 )
+func startHealthServer() {
+ port := os.Getenv("PORT")
+ if port == "" {
+  port = "10000"
+ }
 
+ http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+  w.Write([]byte("Prayer Bot Running"))
+ })
+
+ go func() {
+  log.Printf("Health server listening on :%s", port)
+  if err := http.ListenAndServe(":"+port, nil); err != nil {
+   log.Fatal(err)
+  }
+ }()
+}
 func main() {
 	log.Println("Starting Prayer Bot...")
-
+	startHealthServer()
 	// Load configuration
 	cfg, err := config.Load()
 	if err != nil {
