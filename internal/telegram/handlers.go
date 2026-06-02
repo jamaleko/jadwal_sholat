@@ -205,7 +205,7 @@ func (b *Bot) handleStart(
 
 	msg := `Assalamu'alaikum 👋
 
-Selamat datang di Prayer Bot.
+Selamat datang di Jadwal Sholat by Tekuna.my.id
 
 Silakan bagikan lokasi Anda untuk menerima notifikasi jadwal sholat.`
 
