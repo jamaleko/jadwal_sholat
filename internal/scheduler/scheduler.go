@@ -52,7 +52,7 @@ func checkNotifications(
 	today := now
 	testSchedule := true
 	
-)
+
 	for _, user := range users {
 		schedule, err := prayerService.GetTodaySchedule(
 			user.Latitude,
