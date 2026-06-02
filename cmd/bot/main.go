@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"net/http"
 
 	"prayer-bot/internal/config"
 	"prayer-bot/internal/database"
