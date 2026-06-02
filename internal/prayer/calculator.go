@@ -14,7 +14,10 @@ func CalculatePrayerTimes(
 	date time.Time,
 ) (*models.PrayerSchedule, error) {
 
-	location := date.Location()
+	location, err := time.LoadLocation("Asia/Jakarta")
+	if err != nil {
+	 return nil, err
+	}
 
 	schedules, err := goprayer.Calculate(
 		goprayer.Config{
@@ -35,10 +38,7 @@ func CalculatePrayerTimes(
 	day := date.YearDay()
 
 	schedule := schedules[day-1]
-	location, err := time.LoadLocation("Asia/Jakarta")
-	if err != nil {
-	 return nil, err
-	}
+	
 
 	result := &models.PrayerSchedule{
 	 Fajr:    schedule.Fajr.In(location),
