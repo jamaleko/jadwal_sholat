@@ -98,11 +98,11 @@ func checkAndSend(
 		return
 	}
 
-	sent, err := notifService.AlreadySent(ctx, chatID, prayerName, today)
+	/*sent, err := notifService.AlreadySent(ctx, chatID, prayerName, today)
 	if err != nil {
 		log.Printf("failed check already sent: %v", err)
 		return
-	}
+	}*/
 	if sent {
 		return
 	}
@@ -118,7 +118,7 @@ func checkAndSend(
 		return
 	}
 
-	err = notifService.MarkAsSent(ctx, chatID, prayerName, today)
+	//err = notifService.MarkAsSent(ctx, chatID, prayerName, today)
 	if err != nil {
 		log.Printf("failed mark notification sent: %v", err)
 	}
