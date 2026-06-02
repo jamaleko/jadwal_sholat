@@ -92,9 +92,7 @@ func checkAndSend(
 	chatID,
 )*/
 	ctx := context.Background()
-	now := time.Now()
-	loc, _ := time.LoadLocation("Asia/Jakarta")
-	now := time.Now().In(loc)
+	
 	// hanya cek menit, biar aman jika delay
 	log.Printf(
 	    "NOW=%s (%s) TARGET=%s (%s)",
